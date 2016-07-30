@@ -74,8 +74,11 @@ updated_at       | `Date`    | 用户上次更新的日期
 ```shell
 curl "https://askiapi.herokuapp.com/api/auth.json" \
   -H "Content-Type: application/json; charset=utf-8" \
-  -d '{ "email": "vincent.zhao@askinow.com", "password": "foobar123", "password_confirmation": "foobar123" }' \
-  -iXPOST
+  -d '{ "email": "alistair.zhao@askinow.com", 
+        "password": "foobar123", 
+        "password_confirmation": "foobar123" }' \
+  -X POST \
+  -i 
 ```
 
 ```javascript
