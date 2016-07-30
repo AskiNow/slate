@@ -221,8 +221,11 @@
 <h2 id="sign-up">Sign Up</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://askiapi.herokuapp.com/api/auth.json"</span> <span class="se">\</span>
   -H <span class="s2">"Content-Type: application/json; charset=utf-8"</span> <span class="se">\</span>
-  -d <span class="s1">'{ "email": "vincent.zhao@askinow.com", "password": "foobar123", "password_confirmation": "foobar123" }'</span> <span class="se">\</span>
-  -iXPOST
+  -d <span class="s1">'{ "email": "alistair.zhao@askinow.com", 
+        "password": "foobar123", 
+        "password_confirmation": "foobar123" }'</span> <span class="se">\</span>
+  -X POST <span class="se">\</span>
+  -i 
 </code></pre>
 <pre class="highlight javascript"><code>
 </code></pre>
