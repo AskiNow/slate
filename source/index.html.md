@@ -23,7 +23,7 @@ search: true
 
 # Authorization
 
-## Authorization Mechanism Introduction
+## Introduction
 
 权限验证机制简介
 
@@ -248,3 +248,45 @@ Uid          | 用户的唯一ID
 Parameter             | Type      | Description
 --------------------- | --------- | -----------
 errors                | `Array`   | 登陆错误信息字符串列表
+
+# Profile
+
+用户简介信息
+
+```shell
+curl https://askiapi-dev.herokuapp.com/api/users/4/profile \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -X GET \
+  -i
+```
+
+## Get User Profile
+
+获取用户的简介内容，无需权限验证
+
+### HTTP Request
+
+`GET https://askiapi.herokuapp.com/api/users/:user_id/profile`
+
+
+```shell
+curl https://askiapi.herokuapp.com/api/users/2/profile \
+  -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Access-Token: tuBXy8nxftkF-l1kswXQzQ' \
+  -H 'Client: zH4mamOX525ubYSkM0B5sw' \
+  -H 'Uid: vincent.zhao@askinow.com' \
+  -d '{ "description": "This is a new description", 
+        "languages": [ 
+          { "name": "Chinese", "proficiency": "native_or_bilingual" }
+         ] }' \
+  -X PUT \
+  -i
+```
+
+## Update User Profile
+
+更新用户的简介内容，需要对应用户的权限认证才能进行更新
+
+### HTTP Request
+
+`PUT/PATCH https://askiapi.herokuapp.com/api/users/:user_id/profile`
