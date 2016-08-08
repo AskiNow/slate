@@ -128,7 +128,7 @@
 
 <h1 id="authorization">Authorization</h1>
 
-<h2 id="authorization-mechanism-introduction">Authorization Mechanism Introduction</h2>
+<h2 id="introduction">Introduction</h2>
 
 <p>权限验证机制简介</p>
 
@@ -489,6 +489,43 @@ Uid: vincent.zhao@askinow.com
 <td>登陆错误信息字符串列表</td>
 </tr>
 </tbody></table>
+
+<h1 id="profile">Profile</h1>
+
+<p>用户简介信息</p>
+<pre class="highlight shell"><code>curl https://askiapi-dev.herokuapp.com/api/users/4/profile <span class="se">\</span>
+  -H <span class="s1">'Content-Type: application/json; charset=utf-8'</span> <span class="se">\</span>
+  -X GET <span class="se">\</span>
+  -i
+</code></pre>
+
+<h2 id="get-user-profile">Get User Profile</h2>
+
+<p>获取用户的简介内容，无需权限验证</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://askiapi.herokuapp.com/api/users/:user_id/profile</code></p>
+<pre class="highlight shell"><code>curl https://askiapi.herokuapp.com/api/users/2/profile <span class="se">\</span>
+  -H <span class="s1">'Content-Type: application/json; charset=utf-8'</span> <span class="se">\</span>
+  -H <span class="s1">'Access-Token: tuBXy8nxftkF-l1kswXQzQ'</span> <span class="se">\</span>
+  -H <span class="s1">'Client: zH4mamOX525ubYSkM0B5sw'</span> <span class="se">\</span>
+  -H <span class="s1">'Uid: vincent.zhao@askinow.com'</span> <span class="se">\</span>
+  -d <span class="s1">'{ "description": "This is a new description", 
+        "languages": [ 
+          { "name": "Chinese", "proficiency": "native_or_bilingual" }
+         ] }'</span> <span class="se">\</span>
+  -X PUT <span class="se">\</span>
+  -i
+</code></pre>
+
+<h2 id="update-user-profile">Update User Profile</h2>
+
+<p>更新用户的简介内容，需要对应用户的权限认证才能进行更新</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">PUT/PATCH https://askiapi.herokuapp.com/api/users/:user_id/profile</code></p>
 
           <h1 id="errors">Errors</h1>
 
