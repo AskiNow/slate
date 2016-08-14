@@ -485,20 +485,6 @@ Uid: vincent.zhao@askinow.com
 </tr>
 </tbody></table>
 
-<h1 id="profile">Profile</h1>
-
-<p>用户简介信息：用户简介主要包含如下几个部分</p>
-
-<ol>
-<li><code class="prettyprint">语言</code>：用户的主要使用语言，包含语言的<code class="prettyprint">名称</code>和使用的<code class="prettyprint">熟练程度</code>；</li>
-<li><code class="prettyprint">教育经历</code>：包含<code class="prettyprint">学校名称</code>，<code class="prettyprint">开始和结束日期</code>，<code class="prettyprint">学位</code>，<code class="prettyprint">简短描述</code>，以及<code class="prettyprint">专业</code>；</li>
-<li><code class="prettyprint">工作经历</code>：包含<code class="prettyprint">公司名称</code>，<code class="prettyprint">开始和结束日期</code>，<code class="prettyprint">简短描述</code>，以及<code class="prettyprint">职位</code>；</li>
-<li><code class="prettyprint">证书</code>：<code class="prettyprint">名称</code>，<code class="prettyprint">颁发机构</code>，<code class="prettyprint">日期</code>和<code class="prettyprint">简短描述</code>；</li>
-<li><code class="prettyprint">联系信息</code>：<code class="prettyprint">电话号码</code>和<code class="prettyprint">邮箱地址</code>；</li>
-</ol>
-
-<p>此外，用户简介本身还包含用户的<code class="prettyprint">个人描述</code>。具体的字段信息如下所述：</p>
-
 <h2 id="profile-object">Profile Object</h2>
 
 <blockquote>
@@ -559,14 +545,29 @@ Uid: vincent.zhao@askinow.com
 <td>该简历对象对应的<code class="prettyprint">用户</code><a href="#user-object">对象</a></td>
 </tr>
 <tr>
-<td><code class="prettyprint">created_at</code></td>
-<td><code class="prettyprint">Date</code></td>
-<td>语言创建入库的日期</td>
+<td><code class="prettyprint">languages</code></td>
+<td><code class="prettyprint">Array</code></td>
+<td>简历中包含的<code class="prettyprint">语言</code>对象数组</td>
 </tr>
 <tr>
-<td><code class="prettyprint">updated_at</code></td>
-<td><code class="prettyprint">Date</code></td>
-<td>语言上次更新的日期</td>
+<td><code class="prettyprint">education_experiences</code></td>
+<td><code class="prettyprint">Array</code></td>
+<td>简历中包含的<code class="prettyprint">教育经历</code>对象数组</td>
+</tr>
+<tr>
+<td><code class="prettyprint">working_experiences</code></td>
+<td><code class="prettyprint">Array</code></td>
+<td>简历中包含的<code class="prettyprint">工作经历</code>对象数组</td>
+</tr>
+<tr>
+<td><code class="prettyprint">certifications</code></td>
+<td><code class="prettyprint">Array</code></td>
+<td>简历中包含的<code class="prettyprint">证书</code>对象数组</td>
+</tr>
+<tr>
+<td><code class="prettyprint">contact_information</code></td>
+<td><code class="prettyprint">ContactInformation</code></td>
+<td>简历的<code class="prettyprint">联系方式</code>对象</td>
 </tr>
 </tbody></table>
 
@@ -821,6 +822,10 @@ Uid: vincent.zhao@askinow.com
   -i
 </code></pre>
 
+<blockquote>
+<p>返回结果，与<code class="prettyprint">Profile</code>对象内容一致</p>
+</blockquote>
+
 <h2 id="get-user-profile">Get User Profile</h2>
 
 <p>获取用户的简介内容，无需权限验证</p>
@@ -828,26 +833,278 @@ Uid: vincent.zhao@askinow.com
 <h3 id="http-request">HTTP Request</h3>
 
 <p><code class="prettyprint">GET https://askiapi.herokuapp.com/api/users/:user_id/profile</code></p>
-<pre class="highlight shell"><code>curl https://askiapi.herokuapp.com/api/users/2/profile <span class="se">\</span>
+
+<h2 id="update-user-profile">Update User Profile</h2>
+
+<p>更新用户的简介内容，需要对应用户的权限认证才能进行更新。更新操作对于<code class="prettyprint">Profile</code>对象的几个组合类而言，需要使用特定的CRUD接口进行操作。每一个组合类都有一套完整的REST API接口，下面以<code class="prettyprint">Language</code>为例进行介绍。</p>
+
+<aside class="warning">
+对于<code>CREATE</code>，<code>UPDATE</code>与<code>DESTROY</code>操作，都需要在HTTP请求头中加入验证Token。
+</aside>
+
+          <h1 id="profile">Profile</h1>
+
+<p>本章描述用户简介模型，即<code class="prettyprint">Profile</code>。用户简介相对于<code class="prettyprint">用户</code>类而言更加复杂，是由许多<strong>组合类</strong>一起构成的。因此，<code class="prettyprint">Profile</code>的API的结构和使用方式也需要进行详细的介绍。</p>
+
+<p>用户简介主要包含如下几个部分：</p>
+
+<ol>
+<li><code class="prettyprint">语言</code>：用户的主要使用语言，包含语言的<code class="prettyprint">名称</code>和使用的<code class="prettyprint">熟练程度</code>；</li>
+<li><code class="prettyprint">教育经历</code>：包含<code class="prettyprint">学校名称</code>，<code class="prettyprint">开始和结束日期</code>，<code class="prettyprint">学位</code>，<code class="prettyprint">简短描述</code>，以及<code class="prettyprint">专业</code>；</li>
+<li><code class="prettyprint">工作经历</code>：包含<code class="prettyprint">公司名称</code>，<code class="prettyprint">开始和结束日期</code>，<code class="prettyprint">简短描述</code>，以及<code class="prettyprint">职位</code>；</li>
+<li><code class="prettyprint">证书</code>：<code class="prettyprint">名称</code>，<code class="prettyprint">颁发机构</code>，<code class="prettyprint">日期</code>和<code class="prettyprint">简短描述</code>；</li>
+<li><code class="prettyprint">联系信息</code>：<code class="prettyprint">电话号码</code>和<code class="prettyprint">邮箱地址</code>；</li>
+</ol>
+
+<p>除了<code class="prettyprint">联系信息</code>类和<code class="prettyprint">简介</code>类是一对一的关系以外，其他组合类与<code class="prettyprint">简介</code>类之间都是多对一的关系。为了使API具有更高的灵活性和更清晰的组织方式，<code class="prettyprint">简介</code>类的每一个<code class="prettyprint">组合类</code>都有其REST API的全部方法（即CRUD）。</p>
+
+<p>本章接下来会对<code class="prettyprint">Profile</code>的每一个组合类，描述其结构和API，最后进行总结和并给出使用方式的指导。</p>
+
+          <h2 id="language-object">Language Object</h2>
+
+<blockquote>
+<p>一个语言对象</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"chinese"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"proficiency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"native_or_bilingual"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T08:08:53.750Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T08:45:50.469Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">id</code></td>
+<td><code class="prettyprint">Integer</code></td>
+<td>语言对象在数据库中的唯一ID</td>
+</tr>
+<tr>
+<td><code class="prettyprint">profile_id</code></td>
+<td><code class="prettyprint">Integer</code></td>
+<td>关联的profile对象的ID（不建议使用，后续可能会不显示）</td>
+</tr>
+<tr>
+<td><code class="prettyprint">name</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>语言的<code class="prettyprint">名称</code>，在后台保存是全部小写，前端显示可以首字母大写</td>
+</tr>
+<tr>
+<td><code class="prettyprint">proficiency</code></td>
+<td><code class="prettyprint">Enum</code></td>
+<td>语言的<code class="prettyprint">熟练程度</code>，是只有三个值的枚举对象： <code class="prettyprint">elementary</code>（基础水平），<code class="prettyprint">professional</code>（专业），<code class="prettyprint">native_or_bilingual</code>（母语或者第二语言）</td>
+</tr>
+<tr>
+<td><code class="prettyprint">created_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>语言创建入库的日期</td>
+</tr>
+<tr>
+<td><code class="prettyprint">updated_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>语言上次更新的日期</td>
+</tr>
+</tbody></table>
+
+<h2 id="get-user-profile-language">Get User Profile Language</h2>
+<pre class="highlight shell"><code>curl https://askiapi.herokuapp.com/api/users/7/profile/languages/1 <span class="se">\</span>
   -H <span class="s1">'Content-Type: application/json; charset=utf-8'</span> <span class="se">\</span>
-  -H <span class="s1">'Access-Token: tuBXy8nxftkF-l1kswXQzQ'</span> <span class="se">\</span>
-  -H <span class="s1">'Client: zH4mamOX525ubYSkM0B5sw'</span> <span class="se">\</span>
-  -H <span class="s1">'Uid: vincent.zhao@askinow.com'</span> <span class="se">\</span>
-  -d <span class="s1">'{ "description": "This is a new description", 
-        "languages": [ 
-          { "name": "Chinese", "proficiency": "native_or_bilingual" }
-         ] }'</span> <span class="se">\</span>
+  -X GET <span class="se">\</span>
+  -i
+</code></pre>
+
+<blockquote>
+<p>返回结果</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"chinese"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"proficiency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"native_or_bilingual"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-14T12:59:06.790Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-14T12:59:06.790Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>获取用户简介中的<code class="prettyprint">语言</code>对象</p>
+
+<h2 id="list-user-profile-languages">List User Profile Languages</h2>
+<pre class="highlight shell"><code>curl https://askiapi.herokuapp.com/api/users/7/profile/languages <span class="se">\</span>
+  -H <span class="s1">'Content-Type: application/json; charset=utf-8'</span> <span class="se">\</span>
+  -X GET <span class="se">\</span>
+  -i
+</code></pre>
+
+<blockquote>
+<p>返回结果</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"chinese"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"proficiency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"native_or_bilingual"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-14T12:59:06.790Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-14T12:59:06.790Z"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+
+<p>获取用户简介中的全部<code class="prettyprint">语言</code>对象</p>
+
+<h2 id="create-user-profile-language">Create User Profile Language</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://askiapi.herokuapp.com/api/users/7/profile/languages"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-Type: application/json; charset=utf-8"</span> <span class="se">\</span>
+  -H <span class="s2">"Access-Token: Lof2G_3B9A6HXPlpTGw6ig"</span> <span class="se">\</span>
+  -H <span class="s2">"Client: srAnFc2OsPfnAEF5H-rmmA"</span> <span class="se">\</span>
+  -H <span class="s2">"Uid: vincent.zhao@askinow.com"</span> <span class="se">\</span>
+  -d <span class="s1">'{ "name": "English", "proficiency": "professional" }'</span> <span class="se">\</span>
+  -X POST <span class="se">\</span>
+  -i
+</code></pre>
+
+<blockquote>
+<p>返回结果为刚创建的<code class="prettyprint">语言</code>对象</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"english"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"proficiency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"professional"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-14T13:04:28.784Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-14T13:04:28.784Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>当用户想要添加一门新的语言在自己的简介中时，使用该接口。<strong>注意要添加验证信息</strong>，只有用户本人才能创建。</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST https://askiapi.herokuapp.com/api/users/:user_id/profile/languages</code></p>
+
+<h3 id="post-parameters">POST Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">name</code></td>
+<td>true</td>
+<td>语言的名称，比如<code class="prettyprint">Chinese</code>，<code class="prettyprint">Japanese</code>等等，在后台统一转换为小写</td>
+</tr>
+<tr>
+<td><code class="prettyprint">proficiency</code></td>
+<td>true</td>
+<td>语言的熟练度，取值范围如上所述</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+熟练度的取值一定要在上述的三个枚举值之间，否则会触发500错误（该异常暂时未处理）。
+</aside>
+
+<blockquote>
+<p>错误情况1：因为<code class="prettyprint">name</code>发生了重复，每个用户的<code class="prettyprint">语言</code>名称是唯一的。</p>
+</blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 422 Unprocessable Entity
+</code></pre>
+<pre class="highlight json"><code><span class="p">{</span><span class="w"> </span><span class="nt">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"has already been taken"</span><span class="p">]</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<blockquote>
+<p>错误情况2：验证信息失效</p>
+</blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 401 Unauthorized
+</code></pre>
+<pre class="highlight json"><code><span class="p">{</span><span class="w"> </span><span class="nt">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Authorized users only."</span><span class="p">]</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<h2 id="update-user-profile-language">Update User Profile Language</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://askiapi.herokuapp.com/api/users/7/profile/languages/2"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-Type: application/json; charset=utf-8"</span> <span class="se">\</span>
+  -H <span class="s2">"Access-Token: Lof2G_3B9A6HXPlpTGw6ig"</span> <span class="se">\</span>
+  -H <span class="s2">"Client: srAnFc2OsPfnAEF5H-rmmA"</span> <span class="se">\</span>
+  -H <span class="s2">"Uid: vincent.zhao@askinow.com"</span> <span class="se">\</span>
+  -d <span class="s1">'{ "name": "English", "proficiency": "professional" }'</span> <span class="se">\</span>
   -X PUT <span class="se">\</span>
   -i
 </code></pre>
 
-<h2 id="update-user-profile">Update User Profile</h2>
+<blockquote>
+<p>返回信息，修改过的语言对象</p>
+</blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 200 OK
+</code></pre>
+<pre class="highlight json"><code><span class="p">{</span><span class="w"> 
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"english"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"proficiency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"professional"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-14T13:04:28.784Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-14T13:04:28.784Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
 
-<p>更新用户的简介内容，需要对应用户的权限认证才能进行更新</p>
+<p>更新操作与创建操作使用的参数基本一致，除了URL中要指定<code class="prettyprint">language_id</code>以外。注意验证信息也要加上。</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">PUT/PATCH https://askiapi.herokuapp.com/api/users/:user_id/profile</code></p>
+<p><code class="prettyprint">PUT/PATCH https://askiapi.herokuapp.com/api/users/:user_id/profile/languages/:id</code></p>
+
+<h3 id="post-parameters">POST Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">name</code></td>
+<td>true</td>
+<td>语言的名称，比如<code class="prettyprint">Chinese</code>，<code class="prettyprint">Japanese</code>等等，在后台统一转换为小写</td>
+</tr>
+<tr>
+<td><code class="prettyprint">proficiency</code></td>
+<td>true</td>
+<td>语言的熟练度，取值范围如上所述</td>
+</tr>
+</tbody></table>
+
+<aside class="warning">
+熟练度的取值一定要在上述的三个枚举值之间，否则会触发500错误（该异常暂时未处理）。
+</aside>
+
+<h2 id="delete-user-profile-language">Delete User Profile Language</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://askiapi.herokuapp.com/api/users/7/profile/languages/2"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-Type: application/json; charset=utf-8"</span> <span class="se">\</span>
+  -H <span class="s2">"Access-Token: Lof2G_3B9A6HXPlpTGw6ig"</span> <span class="se">\</span>
+  -H <span class="s2">"Client: srAnFc2OsPfnAEF5H-rmmA"</span> <span class="se">\</span>
+  -H <span class="s2">"Uid: vincent.zhao@askinow.com"</span> <span class="se">\</span>
+  -X DELETE <span class="se">\</span>
+  -i
+</code></pre>
+
+<blockquote>
+<p>当成功执行之后，返回信息为空，只有<code class="prettyprint">204</code>的状态码</p>
+</blockquote>
+<pre class="highlight plaintext"><code>HTTP/1.1 204 No Content
+</code></pre>
+
+<p><code class="prettyprint">DELETE https://askiapi.herokuapp.com/api/users/:user_id/profile/languages/:id</code></p>
 
           <h1 id="errors">Errors</h1>
 
