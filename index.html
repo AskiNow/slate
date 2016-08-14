@@ -140,7 +140,7 @@
 <li><code class="prettyprint">uid</code>： 当前用户的唯一标识，对于使用<code class="prettyprint">email</code>注册的用户而言，<code class="prettyprint">uid</code>就是邮箱；使用其他OAuth2创建的用户，<code class="prettyprint">uid</code>由这些第三方服务指定；该值的作用是令后台可以判断当前请求对应的用户对象</li>
 </ol>
 
-<p>用户管理模块中，<strong>登陆</strong>，<strong>注册</strong>以及<strong>忘记密码</strong>的功能都是基于权限验证机制实现的，其他模块中涉及到用户数据的修改与验证时，也是基于上述权限验证机制进行验证。</p>
+<p>用户管理模块中，<code class="prettyprint">登陆</code>，<code class="prettyprint">注册</code>以及<code class="prettyprint">忘记密码</code>的功能都是基于权限验证机制实现的，其他模块中涉及到用户数据的修改与验证时，也是基于上述权限验证机制进行验证。</p>
 
 <p>本模块中涉及到的全部API在下方列出, 所有的数据传输都是通过JSON格式。</p>
 
@@ -194,7 +194,7 @@
 <tr>
 <td>nickname</td>
 <td><code class="prettyprint">String</code></td>
-<td>用户的昵称，<strong>当前版本不使用</strong></td>
+<td>用户的昵称，<code class="prettyprint">当前版本不使用</code></td>
 </tr>
 <tr>
 <td>image</td>
@@ -366,11 +366,6 @@
   -X POST <span class="se">\</span>
   -i
 </code></pre>
-<pre class="highlight javascript"><code><span class="kr">const</span> <span class="nx">kittn</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'kittn'</span><span class="p">);</span>
-
-<span class="kd">let</span> <span class="nx">api</span> <span class="o">=</span> <span class="nx">kittn</span><span class="p">.</span><span class="nx">authorize</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">);</span>
-<span class="kd">let</span> <span class="nx">max</span> <span class="o">=</span> <span class="nx">api</span><span class="p">.</span><span class="nx">kittens</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-</code></pre>
 
 <blockquote>
 <p>返回的成功结果，尤其注意HTTP headers的内容</p>
@@ -432,7 +427,7 @@ Uid: vincent.zhao@askinow.com
 
 <h3 id="success-response">Success response</h3>
 
-<p><strong>Body</strong></p>
+<p><code class="prettyprint">Body</code></p>
 
 <table><thead>
 <tr>
@@ -448,7 +443,7 @@ Uid: vincent.zhao@askinow.com
 </tr>
 </tbody></table>
 
-<p><strong>Header</strong></p>
+<p><code class="prettyprint">Header</code></p>
 
 <aside class="info">
 如下三个headers在后续的请求中（需要权限验证）都需要加上
@@ -492,8 +487,335 @@ Uid: vincent.zhao@askinow.com
 
 <h1 id="profile">Profile</h1>
 
-<p>用户简介信息</p>
-<pre class="highlight shell"><code>curl https://askiapi-dev.herokuapp.com/api/users/4/profile <span class="se">\</span>
+<p>用户简介信息：用户简介主要包含如下几个部分</p>
+
+<ol>
+<li><code class="prettyprint">语言</code>：用户的主要使用语言，包含语言的<code class="prettyprint">名称</code>和使用的<code class="prettyprint">熟练程度</code>；</li>
+<li><code class="prettyprint">教育经历</code>：包含<code class="prettyprint">学校名称</code>，<code class="prettyprint">开始和结束日期</code>，<code class="prettyprint">学位</code>，<code class="prettyprint">简短描述</code>，以及<code class="prettyprint">专业</code>；</li>
+<li><code class="prettyprint">工作经历</code>：包含<code class="prettyprint">公司名称</code>，<code class="prettyprint">开始和结束日期</code>，<code class="prettyprint">简短描述</code>，以及<code class="prettyprint">职位</code>；</li>
+<li><code class="prettyprint">证书</code>：<code class="prettyprint">名称</code>，<code class="prettyprint">颁发机构</code>，<code class="prettyprint">日期</code>和<code class="prettyprint">简短描述</code>；</li>
+<li><code class="prettyprint">联系信息</code>：<code class="prettyprint">电话号码</code>和<code class="prettyprint">邮箱地址</code>；</li>
+</ol>
+
+<p>此外，用户简介本身还包含用户的<code class="prettyprint">个人描述</code>。具体的字段信息如下所述：</p>
+
+<h2 id="profile-object">Profile Object</h2>
+
+<blockquote>
+<p>一个典型的用户简历对象</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello World"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"provider"</span><span class="p">:</span><span class="w"> </span><span class="s2">"email"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"uid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"vincent.zhao@askinow.com"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"nickname"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"image"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"vincent.zhao@askinow.com"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-07-31T03:50:37.789Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-12T14:21:04.437Z"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nt">"languages"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nt">"education_experiences"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nt">"working_experiences"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nt">"certifications"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nt">"contact_information"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">id</code></td>
+<td><code class="prettyprint">Integer</code></td>
+<td>简历对象在数据库中的唯一ID</td>
+</tr>
+<tr>
+<td><code class="prettyprint">descriptiion</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>简历对象中的<code class="prettyprint">自我介绍</code></td>
+</tr>
+<tr>
+<td><code class="prettyprint">user</code></td>
+<td><code class="prettyprint">User</code></td>
+<td>该简历对象对应的<code class="prettyprint">用户</code><a href="#user-object">对象</a></td>
+</tr>
+<tr>
+<td><code class="prettyprint">created_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>语言创建入库的日期</td>
+</tr>
+<tr>
+<td><code class="prettyprint">updated_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>语言上次更新的日期</td>
+</tr>
+</tbody></table>
+
+<h3 id="language-object">Language Object</h3>
+
+<blockquote>
+<p>一个语言对象</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"chinese"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"proficiency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"native_or_bilingual"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T08:08:53.750Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T08:45:50.469Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">id</code></td>
+<td><code class="prettyprint">Integer</code></td>
+<td>语言对象在数据库中的唯一ID</td>
+</tr>
+<tr>
+<td><code class="prettyprint">profile_id</code></td>
+<td><code class="prettyprint">Integer</code></td>
+<td>关联的profile对象的ID（不建议使用，后续可能会不显示）</td>
+</tr>
+<tr>
+<td><code class="prettyprint">name</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>语言的<code class="prettyprint">名称</code>，全部小写</td>
+</tr>
+<tr>
+<td><code class="prettyprint">proficiency</code></td>
+<td><code class="prettyprint">Enum</code></td>
+<td>语言的<code class="prettyprint">熟练程度</code>，是只有三个值的枚举对象： <code class="prettyprint">elementary</code>（基础水平），<code class="prettyprint">professional</code>（专业），<code class="prettyprint">native_or_bilingual</code>（母语或者第二语言）</td>
+</tr>
+<tr>
+<td><code class="prettyprint">created_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>语言创建入库的日期</td>
+</tr>
+<tr>
+<td><code class="prettyprint">updated_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>语言上次更新的日期</td>
+</tr>
+</tbody></table>
+
+<h3 id="education-experience-object">Education Experience Object</h3>
+
+<blockquote>
+<p>一个用户教育经历对象</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"school_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Peking University"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"degree"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bachelor of Science"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"field_of_study"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Computer Science and Technology"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"started_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-09-01"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"ended_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-07-01"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"During my undergraduate study at Peking University, I ..."</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T09:20:16.161Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T09:20:27.095Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">id</code></td>
+<td><code class="prettyprint">Integer</code></td>
+<td>教育经历对象在数据表中的唯一ID</td>
+</tr>
+<tr>
+<td><code class="prettyprint">profile_id</code></td>
+<td><code class="prettyprint">Integer</code></td>
+<td>关联的profile对象的ID（不建议使用，后续可能会不显示）</td>
+</tr>
+<tr>
+<td><code class="prettyprint">school_name</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>学校名称</td>
+</tr>
+<tr>
+<td><code class="prettyprint">degree</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>学位名称</td>
+</tr>
+<tr>
+<td><code class="prettyprint">field_of_study</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>专业名称</td>
+</tr>
+<tr>
+<td><code class="prettyprint">started_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>教育经历的开始日期</td>
+</tr>
+<tr>
+<td><code class="prettyprint">ended_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>教育经历的结束日期</td>
+</tr>
+<tr>
+<td><code class="prettyprint">description</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>用户对教育经历的描述</td>
+</tr>
+<tr>
+<td><code class="prettyprint">created_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>教育经历创建入库的时间戳</td>
+</tr>
+<tr>
+<td><code class="prettyprint">updated_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>教育经历上次更新的时间戳</td>
+</tr>
+</tbody></table>
+
+<h3 id="working-experience-object">Working Experience Object</h3>
+
+<blockquote>
+<p>一个用户工作经历对象</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"company_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sophisters Ltd"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"position"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CTO"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"started_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-08-01"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"ended_at"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Amazing"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T14:12:32.492Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T14:12:32.492Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>与<code class="prettyprint">教育经历</code>相同的字段解释意义相同，其他字段的含义：</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">company_name</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>公司名称</td>
+</tr>
+<tr>
+<td><code class="prettyprint">position</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>职位</td>
+</tr>
+</tbody></table>
+
+<h3 id="certification-object">Certification Object</h3>
+
+<blockquote>
+<p>用户获得的证书对象</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"IELTS"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"authority"</span><span class="p">:</span><span class="w"> </span><span class="s2">"British Council"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"issued_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-10-24"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Total score 7.5, Yeah!"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T13:41:54.076Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T13:41:54.076Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">name</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>证书的名称</td>
+</tr>
+<tr>
+<td><code class="prettyprint">authority</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>证书的颁发机构</td>
+</tr>
+<tr>
+<td><code class="prettyprint">issued_at</code></td>
+<td><code class="prettyprint">Date</code></td>
+<td>颁发日期</td>
+</tr>
+</tbody></table>
+
+<h3 id="contact-information">Contact Information</h3>
+
+<blockquote>
+<p>用户的联系信息对象</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"phone_number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"+86 18638670575"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"vincent.zhao@askinow.com"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"profile_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T14:29:00.035Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"updated_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-08-13T14:29:00.035Z"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">phone_number</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>电话号码</td>
+</tr>
+<tr>
+<td><code class="prettyprint">email</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>联系邮箱</td>
+</tr>
+</tbody></table>
+<pre class="highlight shell"><code>curl https://askiapi.herokuapp.com/api/users/4/profile <span class="se">\</span>
   -H <span class="s1">'Content-Type: application/json; charset=utf-8'</span> <span class="se">\</span>
   -X GET <span class="se">\</span>
   -i
