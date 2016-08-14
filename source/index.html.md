@@ -6,6 +6,8 @@ language_tabs:
   - javascript
 
 includes:
+  - profile/overview
+  - profile/language
   - errors
 
 search: true
@@ -242,17 +244,7 @@ Parameter             | Type      | Description
 --------------------- | --------- | -----------
 errors                | `Array`   | 登陆错误信息字符串列表
 
-# Profile
 
-用户简介信息：用户简介主要包含如下几个部分
-
-1. `语言`：用户的主要使用语言，包含语言的`名称`和使用的`熟练程度`；
-2. `教育经历`：包含`学校名称`，`开始和结束日期`，`学位`，`简短描述`，以及`专业`；
-3. `工作经历`：包含`公司名称`，`开始和结束日期`，`简短描述`，以及`职位`；
-4. `证书`：`名称`，`颁发机构`，`日期`和`简短描述`；
-5. `联系信息`：`电话号码`和`邮箱地址`；
-
-此外，用户简介本身还包含用户的`个人描述`。具体的字段信息如下所述：
 
 ## Profile Object
 
@@ -291,13 +283,17 @@ errors                | `Array`   | 登陆错误信息字符串列表
 }
 ```
 
-Parameter        | Type      | Description
----------------- | --------- | -----------
-`id`             | `Integer` | 简历对象在数据库中的唯一ID
-`descriptiion`   | `String`  | 简历对象中的`自我介绍`
-`user`           | `User`    | 该简历对象对应的`用户`[对象](#user-object)
-`created_at`     | `Date`    | 语言创建入库的日期
-`updated_at`     | `Date`    | 语言上次更新的日期
+Parameter                 | Type      | Description
+------------------------- | --------- | -----------
+`id`                      | `Integer` | 简历对象在数据库中的唯一ID
+`descriptiion`            | `String`  | 简历对象中的`自我介绍`
+`user`                    | `User`    | 该简历对象对应的`用户`[对象](#user-object)
+`languages`               | `Array`   | 简历中包含的`语言`对象数组
+`education_experiences`   | `Array`   | 简历中包含的`教育经历`对象数组
+`working_experiences`     | `Array`   | 简历中包含的`工作经历`对象数组
+`certifications`          | `Array`   | 简历中包含的`证书`对象数组
+`contact_information`     | `ContactInformation` | 简历的`联系方式`对象
+
 
 
 ### Language Object
@@ -431,6 +427,8 @@ curl https://askiapi.herokuapp.com/api/users/4/profile \
   -i
 ```
 
+> 返回结果，与`Profile`对象内容一致
+
 ## Get User Profile
 
 获取用户的简介内容，无需权限验证
@@ -439,26 +437,16 @@ curl https://askiapi.herokuapp.com/api/users/4/profile \
 
 `GET https://askiapi.herokuapp.com/api/users/:user_id/profile`
 
-
-```shell
-curl https://askiapi.herokuapp.com/api/users/2/profile \
-  -H 'Content-Type: application/json; charset=utf-8' \
-  -H 'Access-Token: tuBXy8nxftkF-l1kswXQzQ' \
-  -H 'Client: zH4mamOX525ubYSkM0B5sw' \
-  -H 'Uid: vincent.zhao@askinow.com' \
-  -d '{ "description": "This is a new description", 
-        "languages": [ 
-          { "name": "Chinese", "proficiency": "native_or_bilingual" }
-         ] }' \
-  -X PUT \
-  -i
-```
-
 ## Update User Profile
 
-更新用户的简介内容，需要对应用户的权限认证才能进行更新
+更新用户的简介内容，需要对应用户的权限认证才能进行更新。更新操作对于`Profile`对象的几个组合类而言，需要使用特定的CRUD接口进行操作。每一个组合类都有一套完整的REST API接口，下面以`Language`为例进行介绍。
 
-### HTTP Request
 
-`PUT/PATCH https://askiapi.herokuapp.com/api/users/:user_id/profile`
+
+ 
+
+
+<aside class="warning">
+对于<code>CREATE</code>，<code>UPDATE</code>与<code>DESTROY</code>操作，都需要在HTTP请求头中加入验证Token。
+</aside>
 
