@@ -22,7 +22,7 @@ Parameter        | Type      | Description
 `created_at`     | `Date`    | 语言创建入库的日期
 `updated_at`     | `Date`    | 语言上次更新的日期
 
-## Get User Profile Language
+### Get User Profile Language
 
 ```shell
 curl https://askiapi.herokuapp.com/api/users/7/profile/languages/1 \
@@ -46,7 +46,7 @@ curl https://askiapi.herokuapp.com/api/users/7/profile/languages/1 \
 
 获取用户简介中的`语言`对象
 
-## List User Profile Languages
+### List User Profile Languages
 
 ```shell
 curl https://askiapi.herokuapp.com/api/users/7/profile/languages \
@@ -72,7 +72,7 @@ curl https://askiapi.herokuapp.com/api/users/7/profile/languages \
 获取用户简介中的全部`语言`对象
 
 
-## Create User Profile Language
+### Create User Profile Language
 
 ```shell
 curl "https://askiapi.herokuapp.com/api/users/7/profile/languages" \
@@ -100,11 +100,11 @@ curl "https://askiapi.herokuapp.com/api/users/7/profile/languages" \
 
 当用户想要添加一门新的语言在自己的简介中时，使用该接口。**注意要添加验证信息**，只有用户本人才能创建。
 
-### HTTP Request
+#### HTTP Request
 
 `POST https://askiapi.herokuapp.com/api/users/:user_id/profile/languages`
 
-### POST Parameters
+#### POST Parameters
 
 Parameter             | Required | Description
 --------------------- | -------  | -----------
@@ -135,7 +135,7 @@ HTTP/1.1 401 Unauthorized
 { "errors": ["Authorized users only."] }
 ```
 
-## Update User Profile Language
+### Update User Profile Language
 
 ```shell
 curl "https://askiapi.herokuapp.com/api/users/7/profile/languages/2" \
@@ -167,11 +167,11 @@ HTTP/1.1 200 OK
 
 更新操作与创建操作使用的参数基本一致，除了URL中要指定`language_id`以外。注意验证信息也要加上。
 
-### HTTP Request
+#### HTTP Request
 
 `PUT/PATCH https://askiapi.herokuapp.com/api/users/:user_id/profile/languages/:id`
 
-### POST Parameters
+#### POST Parameters
 
 Parameter             | Required | Description
 --------------------- | -------  | -----------
@@ -182,7 +182,7 @@ Parameter             | Required | Description
 熟练度的取值一定要在上述的三个枚举值之间，否则会触发500错误（该异常暂时未处理）。
 </aside>
 
-## Delete User Profile Language
+### Delete User Profile Language
 
 ```shell
 curl "https://askiapi.herokuapp.com/api/users/7/profile/languages/2" \
