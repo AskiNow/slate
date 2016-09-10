@@ -127,6 +127,8 @@
 <li>支付系统</li>
 </ol>
 
+<p>除了本文档以外，AskiNow 还在 http://askiapi.herokuapp.com/apipie 发布了利用 <a href="https://github.com/Apipie/apipie-rails">Apipie</a> 自动生成的接口文档， 主要描述了每个接口参数细节，是本文档的很好的补充。</p>
+
           <h1 id="authorization">Authorization</h1>
 
 <h2 id="introduction">Introduction</h2>
@@ -598,7 +600,13 @@ curl https://askiapi.herokuapp.com/api/users/7 <span class="se">\</span>
 
 <p>除了<code class="prettyprint">联系信息</code>类和<code class="prettyprint">简介</code>类是一对一的关系以外，其他组合类与<code class="prettyprint">简介</code>类之间都是多对一的关系。为了使API具有更高的灵活性和更清晰的组织方式，<code class="prettyprint">简介</code>类的每一个<code class="prettyprint">组合类</code>都有其REST API的全部方法（即CRUD）。</p>
 
-<p>本章接下来会对<code class="prettyprint">Profile</code>的每一个组合类，描述其结构和API，最后进行总结和并给出使用方式的指导。</p>
+<p>本章接下来会对 <code class="prettyprint">Profile</code> 的每一个组合类，描述其结构和API，最后进行总结和并给出使用方式的指导。</p>
+
+<blockquote>
+<p>注意：尽管每个组合类都有对应的全部CRUD方法，但是在具体的使用场景中不推荐使用，尤其是在需要“更新用户简介的多个组合类”的场景时。一般情况下，可以直接使用<code class="prettyprint">/users/:userid/profile</code>上的<code class="prettyprint">GET</code>和<code class="prettyprint">PUT</code>方法来完成全部与用户简介相关的操作。</p>
+
+<p>有关用户简介API在前端场景中的使用方式，请参考 <a href="https://github.com/AskiNow/aski_admin">AskiAdmin</a> 项目中与dashboard相关的实现。</p>
+</blockquote>
 
           <h2 id="language-object">Language Object</h2>
 
@@ -1046,9 +1054,13 @@ curl https://askiapi.herokuapp.com/api/users/7 <span class="se">\</span>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
   </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello World"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Vincent Zhao"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"nickname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"kumasento"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"avatar"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
   </span><span class="p">},</span><span class="w">
+  </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mr"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"birthday"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1994-03-03"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"languages"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="err">//</span><span class="w"> </span><span class="err">...</span><span class="w">
   </span><span class="p">],</span><span class="w">
@@ -1085,9 +1097,29 @@ curl https://askiapi.herokuapp.com/api/users/7 <span class="se">\</span>
 <td>简历对象中的<code class="prettyprint">自我介绍</code></td>
 </tr>
 <tr>
-<td><code class="prettyprint">user</code></td>
-<td><code class="prettyprint">User</code></td>
-<td>该简历对象对应的<code class="prettyprint">用户</code><a href="#user-object">对象</a></td>
+<td><code class="prettyprint">name</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>简历对象中的<code class="prettyprint">用户姓名</code></td>
+</tr>
+<tr>
+<td><code class="prettyprint">nickname</code></td>
+<td><code class="prettyprint">String</code></td>
+<td>简历对象中的<code class="prettyprint">用户昵称</code></td>
+</tr>
+<tr>
+<td><code class="prettyprint">avatar</code></td>
+<td><code class="prettyprint">Object</code></td>
+<td>简历对象中的<code class="prettyprint">用户头像</code></td>
+</tr>
+<tr>
+<td><code class="prettyprint">title</code></td>
+<td><code class="prettyprint">Enum</code></td>
+<td>简历对象中的<code class="prettyprint">用户头衔</code></td>
+</tr>
+<tr>
+<td><code class="prettyprint">birthday</code></td>
+<td><code class="prettyprint">Enum</code></td>
+<td>简历对象中的<code class="prettyprint">用户生日</code></td>
 </tr>
 <tr>
 <td><code class="prettyprint">languages</code></td>
@@ -1116,6 +1148,16 @@ curl https://askiapi.herokuapp.com/api/users/7 <span class="se">\</span>
 </tr>
 </tbody></table>
 
+<p>有几个注意要点：</p>
+
+<ol>
+<li><code class="prettyprint">avatar</code> 即用户头像，请参考<code class="prettyprint">User</code>对象中相关的描述来使用</li>
+<li><code class="prettyprint">name</code>，<code class="prettyprint">nickname</code>和<code class="prettyprint">avatar</code>都与<code class="prettyprint">User</code>对象中对应的域相同，在之后的版本中，<code class="prettyprint">User</code>的对应域会放弃，只使用<code class="prettyprint">Profile</code>中的域。</li>
+<li><code class="prettyprint">title</code>的枚举值有：<code class="prettyprint">mr</code>，<code class="prettyprint">mrs</code>，<code class="prettyprint">ms</code>，<code class="prettyprint">miss</code>，<code class="prettyprint">dr</code>，前端展示时记得首字母大写，末尾增加<code class="prettyprint">.</code></li>
+<li><code class="prettyprint">languages</code>往后的几个域，在更新的时候作为参数名称时都要增加<code class="prettyprint">_attributes</code>后缀</li>
+<li>与日期相关的参数，在前端使用时如果遇到问题，可以尝试将自身作为参数创建 JavaScript 中的 <code class="prettyprint">Date</code> 对象</li>
+</ol>
+
 <h3 id="get-user-profile">Get User Profile</h3>
 <pre class="highlight shell"><code>curl https://askiapi.herokuapp.com/api/users/4/profile <span class="se">\</span>
   -H <span class="s1">'Content-Type: application/json; charset=utf-8'</span> <span class="se">\</span>
@@ -1134,12 +1176,34 @@ curl https://askiapi.herokuapp.com/api/users/7 <span class="se">\</span>
 <p><code class="prettyprint">GET https://askiapi.herokuapp.com/api/users/:user_id/profile</code></p>
 
 <h3 id="update-user-profile">Update User Profile</h3>
+<pre class="highlight shell"><code>curl https://askiapi.herokuapp.com/api/users/4/profile <span class="se">\</span>
+  -H <span class="s1">'Content-Type: application/json; charset=utf-8'</span> <span class="se">\</span>
+  -X PUT <span class="se">\</span>
+  -d <span class="s1">'{
+    "name": "Vincent Zhao",
+    "languages": [
+    { "id": 1, "name": "Chinese", "proficiency": "native_or_bilingual" },
+    { "id": 2, "_destroy": 1 },
+    { "name": "English", "proficiency": "professional" }  
+    ]
+  }'</span> <span class="se">\</span>
+  -i
+</code></pre>
 
-<p>更新用户的简介内容，需要对应用户的权限认证才能进行更新。更新操作对于<code class="prettyprint">Profile</code>对象的几个组合类而言，需要使用特定的CRUD接口进行操作。每一个组合类都有一套完整的REST API接口，下面以<code class="prettyprint">Language</code>为例进行介绍。</p>
+<p>更新用户的简介内容，需要对应用户的权限认证才能进行更新。本接口不只可以更新简介类自身的属性，还可以对其组合类进行 CRUD 操作，具体操作方式为：</p>
 
-<aside class="warning">
-对于<code>CREATE</code>，<code>UPDATE</code>与<code>DESTROY</code>操作，都需要在HTTP请求头中加入验证Token。
-</aside>
+<ol>
+<li>对简介类自身属性，直接传参数即可；</li>
+<li>创建组合类的对象，传递不带<code class="prettyprint">id</code>的参数</li>
+<li>修改组合类的对象，需要在参数中增加<code class="prettyprint">id</code>域，指向要更新的目标</li>
+<li>删除组合类的对象，需要在参数中增加<code class="prettyprint">_destroy</code>域，并将其值设置为1</li>
+</ol>
+
+<p>返回结果是更新后的用户简介对象。</p>
+
+<blockquote>
+<p>如果需要同时更新avatar，则调用方式与<code class="prettyprint">User</code> 类中对头像更新的讲解基本一致，只需要修改除了头像参数以外的值即可  </p>
+</blockquote>
 
           <h1 id="errors">Errors</h1>
 
