@@ -1178,14 +1178,19 @@ curl https://askiapi.herokuapp.com/api/users/7 <span class="se">\</span>
 <h3 id="update-user-profile">Update User Profile</h3>
 <pre class="highlight shell"><code>curl https://askiapi.herokuapp.com/api/users/4/profile <span class="se">\</span>
   -H <span class="s1">'Content-Type: application/json; charset=utf-8'</span> <span class="se">\</span>
+  -H <span class="s1">'Access-Token: ...'</span> <span class="se">\</span>
+  -H <span class="s1">'Client: ...'</span> <span class="se">\</span>
+  -H <span class="s1">'Uid: ...'</span> <span class="se">\</span>
   -X PUT <span class="se">\</span>
   -d <span class="s1">'{
-    "name": "Vincent Zhao",
-    "languages_attributes": [
-    { "id": 1, "name": "Chinese", "proficiency": "native_or_bilingual" },
-    { "id": 2, "_destroy": 1 },
-    { "name": "English", "proficiency": "professional" }  
-    ]
+    "profile": {
+      "name": "Vincent Zhao",
+      "languages_attributes": [
+      { "id": 1, "name": "Chinese", "proficiency": "native_or_bilingual" },
+      { "id": 2, "_destroy": 1 },
+      { "name": "English", "proficiency": "professional" }  
+      ]
+    }
   }'</span> <span class="se">\</span>
   -i
 </code></pre>
