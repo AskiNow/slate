@@ -77,14 +77,19 @@ curl https://askiapi.herokuapp.com/api/users/4/profile \
 ```shell
 curl https://askiapi.herokuapp.com/api/users/4/profile \
   -H 'Content-Type: application/json; charset=utf-8' \
+  -H 'Access-Token: ...' \
+  -H 'Client: ...' \
+  -H 'Uid: ...' \
   -X PUT \
   -d '{
-    "name": "Vincent Zhao",
-    "languages_attributes": [
-    { "id": 1, "name": "Chinese", "proficiency": "native_or_bilingual" },
-    { "id": 2, "_destroy": 1 },
-    { "name": "English", "proficiency": "professional" }  
-    ]
+    "profile": {
+      "name": "Vincent Zhao",
+      "languages_attributes": [
+      { "id": 1, "name": "Chinese", "proficiency": "native_or_bilingual" },
+      { "id": 2, "_destroy": 1 },
+      { "name": "English", "proficiency": "professional" }  
+      ]
+    }
   }' \
   -i
 ```
